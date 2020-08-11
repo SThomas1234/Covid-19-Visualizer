@@ -60,7 +60,7 @@ def get_user_input():
         one_county_cases_monthly(user_response)
 
     elif option == 7: 
-        user_response = int(input("Choose the county whose montlhy mortalities you wish to graph. ")
+        user_response = int(input("Choose the county whose montlhy mortalities you wish to graph. "))
         one_county_mortalities_monthly(user_response)
 
     elif option == 8:
