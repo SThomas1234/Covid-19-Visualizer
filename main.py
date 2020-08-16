@@ -13,13 +13,18 @@ Allow users to select one county at a time. When done, only info from that count
 Allow users to create graphs comparing two different counties.
 Add fifth and sixth options (one state mortalities and one state cases) onto option variable in get_user_input() function
 Update descriptions across functions to make each specific and clear
-Find a way to import dictionary from a file to reduce file length
-
-TO-DO:
-Allow users to see the list of states and their corresponding numbers so that they can choose which one they want (need to figure out how to organize [ex. by state?])
-Make functioning website that runs this code when everything else works
-Reconsider which types of plots should be used for different functions (all line? stacked bar?)
+Find a way to import dictionary from a file to reduce program length
 Add monthly cases/mortalities for each state
+
+TO-DO (Definite):
+Display the counties (with their respective numbers) for users to choose which ones they want to analyze.
+Reconsider which types of plots should be used for different functions (all line? stacked bar?)
+Allow users to see the list of states and their corresponding numbers so that they can choose which one they want (need to figure out how to organize [ex. by state?])
+
+
+TO-DO (Potential):
+Make a interactive map of the U.S. showing the cases on a statewide level 
+Make functioning website that runs this code when everything else works (look into pythonanywhere.com)
 
 """
 import sys
@@ -27,8 +32,6 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 import pickle, os
-
-
 
 def get_user_input():
     option = int(input("There are several options you can choose in our visualizer. They include\n 1.) Comparing the cases and mortalities in a single county\n 2.) Comparing the cases of 2 different counties\n 3.) Comparing the mortalities of 2 different counties\n 4.) Graphing the cases in a single county over time\n 5.) Graphing the mortalities in a single county over time\n 6.) Graphing the monthly cases of a single county\n 7.) Graphing the monthly mortalities of a single county\n 8.) Comparing the monthly cases of two different counties\n 9.) Comparing the monthly cases and mortalities for a sigle county, or\n 10.) Comparing the monthly mortalities of two different counties\nWhich would you like to do? Please select a number from 1 to 10. "))
@@ -69,27 +72,15 @@ def get_user_input():
         cases_comparison_monthly(user_response_1, user_response_2)
 
     elif option == 9:
-        user_response_1 = int(input("Enter the first county whose monthly mortality numbers you wish to compare. "))
-        user_response_2 = int(input("Enter the second county whose monthly mortality numbers you wish to compare. "))
-
-    elif option == 10: 
         user_response = int(input("Select the county whose monthly cases and mortalities you wish to track. "))
         one_county_cases_and_mortalities_comparison_monthly(user_response)
+        
+
+    elif option == 10: 
+        user_response_1 = int(input("Enter the first county whose monthly mortality numbers you wish to compare. "))
+        user_response_2 = int(input("Enter the second county whose monthly mortality numbers you wish to compare. "))
+        mortality_comparison_monthly(user_response_1, user_response_2)
     
-
-def loop_program():
-    print("Would you like to generate another chart (yes/no)?")
-    response = input()
-    while True:
-        if response.lower() == "yes":
-            run_program()
-        elif response.lower() == "no":
-            print("Thank you for using our COVID-19 tracker!")
-            sys.exit()
-        else:
-            print("Invalid response. Please try again.")
-            response = input()
-
 
 def one_county_cases_daily(user_response):
     county = str(counties[user_response])
@@ -129,7 +120,7 @@ def one_county_mortalities_monthly(user_response):
                          "Date": "Month",
                          county: "Mortalities",
                      },
-                     title= county+ ' Monthly Covid Cases')
+                     title= county+ ' Monthly Covid Mortalities')
     fig.show()
 
 def cases_comparison_daily(user_response_1, user_response_2):
@@ -187,7 +178,7 @@ def mortality_comparison_monthly(user_response_1, user_response_2):
         layout=go.Layout(
             title="Monthly Mortalities Comparison: " + county1 + " and " + county2,
             yaxis_title="Mortalities",
-            xaxis_title="Date"
+            xaxis_title="Month"
         )
     )
     fig.show()
@@ -215,12 +206,26 @@ def one_county_cases_and_mortalities_comparison_monthly(user_response):
         go.Scatter(name=county_name +" Monthly Mortalities", x=df5['Month'], y=df5[county_name]),
     ],
         layout=go.Layout(
-            title="Cases and Mortalities Comparison: " + county_name,
+            title="Monthly Cases and Mortalities Comparison: " + county_name,
             yaxis_title="Number of Cases/ Mortalities",
-            xaxis_title="Date"
+            xaxis_title="Month"
         )
     )
     fig.show()
+
+def loop_program():
+    print("Would you like to generate another chart (yes/no)?")
+    response = input()
+    while True:
+        if response.lower() == "yes":
+            run_program()
+        elif response.lower() == "no":
+            print("Thank you for using our COVID-19 visualizer!")
+            sys.exit()
+        else:
+            print("Invalid response. Please try again.")
+            response = input()
+
 
 def run_program():
     get_user_input()
@@ -244,4 +249,5 @@ df5 = pd.read_csv(csv_file_5)
 
 print("Welcome to our COVID-19 visualizer!")
 run_program()
+
 
